@@ -1,0 +1,47 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model MetricSource {
+  id           Int           @id @default(autoincrement())
+  name         String
+  code         String        @unique  
+  isActive     Boolean       @default(true)
+  metricValues MetricValue[]
+  alerts       AlertRule[]
+}
+
+model MetricValue {
+  id             Int          @id @default(autoincrement())
+  metricSource   MetricSource @relation(fields: [metricSourceId], references: [id])
+  metricSourceId Int
+  value          Float
+  recordedAt     DateTime @default(now())
+}
+
+model AlertRule {
+  id             Int          @id @default(autoincrement())
+  metricSource   MetricSource @relation(fields: [metricSourceId], references: [id])
+  metricSourceId Int
+  email          String
+  conditionType  String
+  thresholdValue Float
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  notifications  NotificationLog[]
+}
+
+model NotificationLog {
+  id           Int       @id @default(autoincrement())
+  alertRule    AlertRule @relation(fields: [alertRuleId], references: [id])
+  alertRuleId  Int
+  triggeredAt  DateTime  @default(now())
+  sentVia      String    // "email"
+  status       String    // "success" | "failed"
+  message      String
+}
