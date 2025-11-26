@@ -44,11 +44,19 @@ router.get('/:metal', async (req, res) => {
 
 
     if (!sources) return res.status(404).json({ message: "No data" });
-    const sourceValue = await prisma.metricValue.findFirst({
-      where: { id: sources.id }
-    })
+    // build midnight in UTC for today (safe for Prisma)
+    const today = new Date(); // or use a specific date string
+    const yyyy = today.getUTCFullYear();
+    const mm = today.getUTCMonth(); // monthIndex 0..11
+    const dd = today.getUTCDate();
 
-    res.json(sourceValue);
+    const startOfDayUTC = new Date(Date.UTC(yyyy, mm, dd, 0, 0, 0)); // 00:00:00 UTC
+
+    const found = await prisma.metricValue.findFirst({
+      where: { recordedAt: startOfDayUTC } // exact timestamp match
+    });
+
+    res.json(found);
 
   }
   else {
