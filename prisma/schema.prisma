@@ -47,3 +47,11 @@ model NotificationLog {
   message     String
   alertRule   AlertRule @relation(fields: [alertRuleId], references: [id])
 }
+
+model TelegramSubscriber {
+  id        Int      @id @default(autoincrement())
+  chatId    String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+}
+
