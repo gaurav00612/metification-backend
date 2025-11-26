@@ -24,11 +24,11 @@ app.use("/metrics", metricRoutes);
 // app.use("/alerts", alertRoutes);
 
 cron.schedule("*/5 * * * *", async () => {
-console.log("Running metrics + alerts job");
+console.error("Running metrics + alerts job");
 //   await processMetricsAndAlerts();
 });
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.error(`Server running on port ${PORT}`);
 });
