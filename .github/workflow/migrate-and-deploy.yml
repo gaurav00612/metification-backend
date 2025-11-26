@@ -1,0 +1,30 @@
+name: CI — Migrate & Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.8.0
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Prisma generate (so client exists)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma generate
+
+      - name: Run Prisma migrations (deploy)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma migrate deploy
