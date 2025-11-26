@@ -1,13 +1,12 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
+import PrismaClient from "./PrismaClient.js";
 import cron from "node-cron";
 import metricRoutes from "./routes/metric.js";
 
-dotenv.config();
 
-export const prisma = new PrismaClient();
+dotenv.config();
 
 const app = express();
 app.use(cors());
@@ -27,6 +26,9 @@ cron.schedule("*/5 * * * *", async () => {
 console.error("Running metrics + alerts job");
 //   await processMetricsAndAlerts();
 });
+
+import "./scheduler/dailyAlert.js";
+
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

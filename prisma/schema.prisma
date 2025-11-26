@@ -54,4 +54,3 @@ model TelegramSubscriber {
   name      String?
   createdAt DateTime @default(now())
 }
-

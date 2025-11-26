@@ -1,7 +1,7 @@
 import { env } from "process";
-import { prisma } from "../index.js";
 import axios from "axios";
 import { parseGoldTimeframe } from "./Parsers/goldParser.js";
+import PrismaClient from "../PrismaClient.js";
 
 const apiKey = process.env.METAL_API_KEY;
 
@@ -27,13 +27,13 @@ export async function fetchAndStoreGoldInr() {
 
   const price = Math.round(ouncePriceInInr * (10 / 31.1034768));
 
-  const source = await prisma.metricSource.findFirst({
+  const source = await PrismaClient.metricSource.findFirst({
     where: { code: "GOLD_INR", isActive: true }
   });
 
   if (!source) return;
 
-  await prisma.metricValue.create({
+  await PrismaClient.metricValue.create({
     data: {
       metricSourceId: source.id,
       value: price
@@ -69,13 +69,13 @@ export async function timeFrame(startDate, endDate, { storeToDb = true } = {}) {
   }
 
   // find source
-  const source = await prisma.metricSource.findFirst({
+  const source = await PrismaClient.metricSource.findFirst({
     where: { code: "GOLD_INR", isActive: true }
   });
   if (!source) return { ok: false, error: "metric source missing" };
 
   // Query DB for existing rows in range (assumes recordedAt stored as Date)
-  const existing = await prisma.metricValue.findMany({
+  const existing = await PrismaClient.metricValue.findMany({
     where: {
       metricSourceId: source.id,
       recordedAt: {
@@ -145,14 +145,14 @@ export async function timeFrame(startDate, endDate, { storeToDb = true } = {}) {
       if (toInsert.length > 0) {
         // Prefer createMany for speed. If you want to avoid duplicates, ensure unique constraint
         try {
-          await prisma.metricValue.createMany({
+          await PrismaClient.metricValue.createMany({
             data: toInsert,
             skipDuplicates: true // requires unique constraint to work
           });
         } catch (e) {
           // fallback to per-row create if createMany fails (e.g., no unique constraint)
           for (const row of toInsert) {
-            await prisma.metricValue.create({ data: row });
+            await PrismaClient.metricValue.create({ data: row });
           }
         }
       }

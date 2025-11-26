@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { prisma } from "../index.js";
+import prisma from "../PrismaClient.js";
 import { fetchAndStoreGoldInr, timeFrame } from "../services/metricServices.js";
 import { useLocation } from "react-router-dom";
 
