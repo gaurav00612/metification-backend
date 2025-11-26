@@ -57,17 +57,14 @@ if (!token) {
         try {
             console.log("[dailyAlert] running startup self-check...");
             const subs = await PrismaClient?.telegramSubscriber?.findMany();
-            console.log(`[dailyAlert] subscribers on startup: ${subs?.length}`);
-            // do not spam users on startup — only log. If you want to send on startup, uncomment:
-            // const report = await computeDailyChangeForToday();
-            // for (const s of subs) await sendReportToChat(s.chatId, report);
+            console.log(`[dailyAlert] subscribers on startup: ${subs?.length}`);;
         } catch (e) {
             console.error("[dailyAlert] startup check failed:", e);
         }
     })();
 
     // TEMP: schedule every minute for testing (change back to daily later)
-    const cronExpr = "*/1 * * * *";
+    const cronExpr = "0 9 * * *";
     console.error("[dailyAlert] scheduling cron:", cronExpr, "timezone Asia/Kolkata");
     cron.schedule(
         cronExpr,
