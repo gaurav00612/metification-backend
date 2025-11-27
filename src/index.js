@@ -22,10 +22,10 @@ app.get("/test/add-metric", async (req, res) => {
 app.use("/metrics", metricRoutes);
 // app.use("/alerts", alertRoutes);
 
-cron.schedule("*/5 * * * *", async () => {
-console.error("Running metrics + alerts job");
-//   await processMetricsAndAlerts();
-});
+// cron.schedule("*/5 * * * *", async () => {
+// console.error("Running metrics + alerts job");
+// //   await processMetricsAndAlerts();
+// });
 
 import "./scheduler/dailyAlert.js";
 
